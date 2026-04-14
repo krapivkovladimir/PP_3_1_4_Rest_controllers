@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Admin page</title>
+</head>
+<body>
+<h1>Admin page</h1>
+
+<h2>All users</h2>
+<table border="1">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Username</th>
+        <th>Name</th>
+        <th>Lastname</th>
+        <th>Age</th>
+        <th>Roles</th>
+        <th>Edit</th>
+        <th>Delete</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="user : ${users}">
+        <td th:text="${user.id}"></td>
+        <td th:text="${user.username}"></td>
+        <td th:text="${user.name}"></td>
+        <td th:text="${user.lastname}"></td>
+        <td th:text="${user.age}"></td>
+        <td>
+            <span th:each="role : ${user.roles}" th:text="${role.name} + ' '"></span>
+        </td>
+        <td>
+            <a th:href="@{/admin/edit(id=${user.id})}">Edit</a>
+        </td>
+        <td>
+            <form th:action="@{/admin/delete}" method="post">
+                <input type="hidden" name="id" th:value="${user.id}">
+                <button type="submit">Delete</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+
+<h2>Add new user</h2>
+<form th:action="@{/admin/add}" method="post">
+    <input type="text" name="username" placeholder="Username">
+    <input type="password" name="password" placeholder="Password">
+    <input type="text" name="name" placeholder="Name">
+    <input type="text" name="lastname" placeholder="Lastname">
+    <input type="number" name="age" placeholder="Age">
+    <div th:each="role : ${roles}">
+        <label>
+            <input type="checkbox" name="roles" th:value="${role.name}">
+            <span th:text="${role.name}"></span>
+        </label>
+    </div>
+    <button type="submit">Add user</button>
+</form>
+
+<form th:action="@{/logout}" method="post">
+    <button type="submit">Logout</button>
+</form>
+</body>
+</html>
