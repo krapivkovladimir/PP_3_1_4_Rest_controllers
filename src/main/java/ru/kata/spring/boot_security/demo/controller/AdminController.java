@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import ru.kata.spring.boot_security.demo.dao.RoleDao;
 import ru.kata.spring.boot_security.demo.model.User;
+import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
 import java.util.List;
@@ -18,18 +18,18 @@ import java.util.List;
 public class AdminController {
 
     private final UserService userService;
-    private final RoleDao roleDao;
+    private final RoleService roleService;
 
-    public AdminController(UserService userService, RoleDao roleDao) {
+    public AdminController(UserService userService, RoleService roleService) {
         this.userService = userService;
-        this.roleDao = roleDao;
+        this.roleService = roleService;
     }
 
     @GetMapping({"", "/"})
     public String getAllUsers(Model model) {
         model.addAttribute("users", userService.getAllUsers());
         model.addAttribute("user", new User());
-        model.addAttribute("roles", roleDao.findAll());
+        model.addAttribute("roles", roleService.getAllRoles());
         return "users";
     }
 
@@ -47,7 +47,7 @@ public class AdminController {
     @GetMapping("/edit")
     public String editUserPage(@RequestParam("id") Long id, Model model) {
         model.addAttribute("user", userService.getUserById(id));
-        model.addAttribute("roles", roleDao.findAll());
+        model.addAttribute("roles", roleService.getAllRoles());
         return "edit-user";
     }
 
