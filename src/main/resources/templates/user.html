@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,11 +9,10 @@
 <body class="bg-light">
 <nav class="navbar navbar-dark bg-dark px-3">
     <span class="navbar-text text-white">
-        <strong th:text="${user.username}">user@mail.ru</strong> with roles:
-        <span th:each="role : ${user.roles}"
-              th:text="${#strings.replace(role.name, 'ROLE_', '')} + ' '">USER</span>
+        <strong id="userEmail">user@mail.ru</strong> with roles:
+        <span id="userRoles">USER</span>
     </span>
-    <form th:action="@{/logout}" method="post" class="mb-0">
+    <form action="/logout" method="post" class="mb-0">
         <button type="submit" class="btn btn-link text-secondary text-decoration-none">Logout</button>
     </form>
 </nav>
@@ -21,8 +20,8 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-2 bg-white min-vh-100 border-end px-0">
-            <div class="nav flex-column nav-pills pt-3">
-                <a class="nav-link active rounded-0" th:href="@{/user}">User</a>
+            <div class="nav flex-column nav-pills pt-3" id="userSidebarNav">
+                <a class="nav-link active rounded-0" href="/user">User</a>
             </div>
         </div>
 
@@ -34,6 +33,7 @@
                     <h5 class="mb-0">About user</h5>
                 </div>
                 <div class="card-body">
+                    <div id="userAlert" class="alert alert-danger d-none" role="alert"></div>
                     <div class="table-responsive">
                         <table class="table table-striped align-middle mb-0">
                             <thead>
@@ -46,19 +46,7 @@
                                 <th>Role</th>
                             </tr>
                             </thead>
-                            <tbody>
-                            <tr>
-                                <td th:text="${user.id}"></td>
-                                <td th:text="${user.name}"></td>
-                                <td th:text="${user.lastname}"></td>
-                                <td th:text="${user.age}"></td>
-                                <td th:text="${user.username}"></td>
-                                <td>
-                                    <span th:each="role : ${user.roles}"
-                                          th:text="${#strings.replace(role.name, 'ROLE_', '')} + ' '"></span>
-                                </td>
-                            </tr>
-                            </tbody>
+                            <tbody id="userTableBody"></tbody>
                         </table>
                     </div>
                 </div>
@@ -66,5 +54,7 @@
         </div>
     </div>
 </div>
+
+<script src="/js/user.js"></script>
 </body>
 </html>

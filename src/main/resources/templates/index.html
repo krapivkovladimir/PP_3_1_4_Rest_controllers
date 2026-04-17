@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -13,10 +13,11 @@
             <div class="pt-5 mt-4">
                 <h1 class="text-center fw-bold mb-3">Please sign in</h1>
 
-                <form action="#" method="post">
+                <form action="/login" method="post">
                     <div class="mb-2">
                         <input type="text"
                                class="form-control"
+                               name="username"
                                placeholder="Email address"
                                autofocus>
                     </div>
@@ -24,6 +25,7 @@
                     <div class="mb-3">
                         <input type="password"
                                class="form-control"
+                               name="password"
                                placeholder="Password">
                     </div>
 
