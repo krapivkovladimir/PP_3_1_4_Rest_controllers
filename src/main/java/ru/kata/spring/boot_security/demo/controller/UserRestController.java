@@ -1,5 +1,6 @@
 package ru.kata.spring.boot_security.demo.controller;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,13 +19,13 @@ import java.util.stream.Collectors;
 public class UserRestController {
 
     @GetMapping("/current")
-    public UserDto getCurrentUser(@AuthenticationPrincipal User user) {
+    public ResponseEntity<UserDto> getCurrentUser(@AuthenticationPrincipal User user) {
         List<RoleDto> roles = user.getRoles().stream()
                 .map(this::toRoleDto)
                 .sorted(Comparator.comparing(RoleDto::getName))
                 .collect(Collectors.toList());
 
-        return new UserDto(
+        UserDto userDto = new UserDto(
                 user.getId(),
                 user.getName(),
                 user.getLastname(),
@@ -32,6 +33,7 @@ public class UserRestController {
                 user.getUsername(),
                 roles
         );
+        return ResponseEntity.ok(userDto);
     }
 
     private RoleDto toRoleDto(Role role) {

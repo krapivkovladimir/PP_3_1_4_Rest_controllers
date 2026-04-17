@@ -3,6 +3,7 @@ package ru.kata.spring.boot_security.demo.controller;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,7 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.kata.spring.boot_security.demo.dto.RoleDto;
 import ru.kata.spring.boot_security.demo.dto.UserDto;
@@ -38,28 +38,29 @@ public class AdminRestController {
     }
 
     @GetMapping("/users")
-    public List<UserDto> getAllUsers() {
-        return userService.getAllUsers().stream()
+    public ResponseEntity<List<UserDto>> getAllUsers() {
+        List<UserDto> users = userService.getAllUsers().stream()
                 .map(this::toUserDto)
                 .collect(Collectors.toList());
+        return ResponseEntity.ok(users);
     }
 
     @GetMapping("/users/{id}")
-    public UserDto getUserById(@PathVariable Long id) {
-        return toUserDto(userService.getUserById(id));
+    public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
+        return ResponseEntity.ok(toUserDto(userService.getUserById(id)));
     }
 
     @GetMapping("/roles")
-    public List<RoleDto> getAllRoles() {
-        return roleService.getAllRoles().stream()
+    public ResponseEntity<List<RoleDto>> getAllRoles() {
+        List<RoleDto> roles = roleService.getAllRoles().stream()
                 .map(this::toRoleDto)
                 .sorted(Comparator.comparing(RoleDto::getName))
                 .collect(Collectors.toList());
+        return ResponseEntity.ok(roles);
     }
 
     @PostMapping("/users")
-    @ResponseStatus(HttpStatus.CREATED)
-    public UserDto createUser(@RequestBody UserRequestDto userRequestDto) {
+    public ResponseEntity<UserDto> createUser(@RequestBody UserRequestDto userRequestDto) {
         userService.createUser(
                 userRequestDto.getUsername(),
                 userRequestDto.getPassword(),
@@ -69,14 +70,15 @@ public class AdminRestController {
                 userRequestDto.getRoles()
         );
 
-        return toUserDto(userService.getAllUsers().stream()
+        UserDto createdUser = toUserDto(userService.getAllUsers().stream()
                 .filter(user -> user.getUsername().equals(userRequestDto.getUsername()))
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("Created user not found")));
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
 
     @PutMapping("/users/{id}")
-    public UserDto updateUser(@PathVariable Long id, @RequestBody UserRequestDto userRequestDto) {
+    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @RequestBody UserRequestDto userRequestDto) {
         userService.updateUser(
                 id,
                 userRequestDto.getUsername(),
@@ -89,13 +91,13 @@ public class AdminRestController {
 
         User updatedUser = userService.getUserById(id);
         refreshAuthenticationIfCurrentUserWasUpdated(updatedUser);
-        return toUserDto(updatedUser);
+        return ResponseEntity.ok(toUserDto(updatedUser));
     }
 
     @DeleteMapping("/users/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteUser(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
+        return ResponseEntity.noContent().build();
     }
 
     private UserDto toUserDto(User user) {
